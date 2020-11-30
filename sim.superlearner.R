@@ -83,7 +83,7 @@ d<- sim(m1,5000)
 setDT(d)
 dat$Y<-(dat$Y1*dat$A)+(dat$Y0*(1-dat$A))
 d[,Y:= (Y1*A)+(Y0*(1-A))]
-d<-d[,.(mi=W1,hf=W2,edu=W3,sex=W4,age=W5,symptom=factor(A),ambulance=M,Y)]
+d<-d[,.(mi=W1,hf=W2,edu=W3,sex=W4,age=W5,symptom=factor(A),ambulance=factor(M),M,Y)]
 
 samp<-sample(nrow(d),4000)
 # create training set
@@ -93,10 +93,9 @@ hold.out.set<-d[-samp]
 # create validation set for outcome
 y.hold.out.set <- d[-samp,Y]
 
-
 ########### split data into exposed and unexposed ############
-dBryst <- x.train[symptom==1]
-dOther <- x.train[symptom==0]
+dBryst <- x.train[symptom==0]
+dOther <- x.train[symptom==1]
   
 ########### mediation analysis using glm ############
 
@@ -111,7 +110,8 @@ mortOther <- glm(Y~age+sex+edu+hf+mi+ambulance,data=dOther,family="binomial")
 # predict ambulance bland other i hypotetisk setting hvor de fik
 # en ambulance lige saa hyppig som dem med Brystsmerter
 dOther.hyp <- copy(dOther)
-dOther.hyp[,symptom:=1]
+dOther.hyp[,symptom:=NULL]
+dOther.hyp[,symptom:=0]
 p.am <- predictRisk(amBryst,newdata=dOther.hyp)
 
 # evaluate change in outcome in hypothetical setting
@@ -130,11 +130,12 @@ c(observed=dOther[,mean(Y)],hypothetical=mean(result))
 ########### mediation analysis using super learner ############
 
 # create training set for outcome
-y.train.other <- d[samp][symptom==1,Y]
-y.train.chest <- d[samp][symptom==0,Y]
+y.train.other <- dOther[symptom==1,Y]
+y.train.chest <- dBryst[symptom==0,Y]
+
 # create training set for mediator
-m.train.other <- d[samp][symptom==1,ambulance]
-m.train.chest <- d[samp][symptom==0,ambulance]
+m.train.other <- dOther[symptom==1,M]
+m.train.chest <- dBryst[symptom==0,M]
 
 # fit the super learner for mediator among  patients with chest pain
 sup.m<-SuperLearner(Y=m.train.chest,
@@ -151,8 +152,9 @@ sup.y<-SuperLearner(Y=y.train.other,
 # predict ambulance bland other i hypotetisk setting hvor de fik
 # en ambulance lige saa hyppig som dem med Brystsmerter
 dOther.hyp <- copy(dOther)
-dOther.hyp[,symptom:=1]
-p.am <- predictRisk(sup.m,newdata=dOther.hyp)
+dOther.hyp[,symptom:=NULL]
+dOther.hyp[,symptom:=0]
+p.am <- predict(sup.m,newdata=dOther.hyp,onlySL = T)
 
 # evaluate change in outcome in hypothetical setting
 loopresult <- foreach(b=1:20,.combine="rbind") %dopar% {
@@ -160,17 +162,11 @@ loopresult <- foreach(b=1:20,.combine="rbind") %dopar% {
   # ambulance in the hypothetical situation
   hyp.other <- copy(dOther)
   hyp.other[,ambulance:=factor(rbinom(.N,1,p.am))]
-  predictRisk(mortOther,newdata=hyp.other)
+  predict(sup.y,newdata=hyp.other,onlySL = T)
 }
 
 result <- apply(loopresult,2,mean)
 c(observed=dOther[,mean(Y)],hypothetical=mean(result))
-
-
-pre<-predict(sup,hold.out.set, onlySL = T)
-  
-summary(pre$library.predict)
-
 
 
 
