@@ -1,4 +1,3 @@
-
 #-----#
 # libraries ----- 
 #pac<-c('SuperLearner','caret','glmnet','randomForest','lava','data.table','riskRegression',
@@ -15,6 +14,12 @@ library(lava)
 options(scipen=999)
 
 ################################### M1 simple data set #######################################
+# Y0 risk of death among patients that say chest pain
+# Y1 risk of death among patients that do not say chest pain
+# A: 0=chest pain, 1=atypical symptoms
+# M0: probability of ambulance among chest pain sayers
+# M1: probability of ambulance among atypical symptom sayers
+
 #Create empty object
 m1<-lvm()
 # Varibles and distributions
@@ -59,7 +64,8 @@ d[,.(id=1:.N,
      Sex=factor(Sex),
      Y=Y)]
 
-glm(Y~A+M+Sex+Age, family = binomial(),data=d)# (til TAG: jeg får nogenlunde samme værdier nu)
+fit <- glm(Y~A+M+Sex+Age, family = binomial(),data=d)# (til TAG: jeg får nogenlunde samme værdier nu)
+
 
 ################################### estimate NIE super simple (A,M,Y) #######################################
 
@@ -87,7 +93,7 @@ mediation.effect<-function(data,A,M,Y) {
   #risk of death if atypical symptoms received ambulance as often as patients with chest pain
   p.intervention<-p.Y1A1M1*p.M1A0+p.Y1A1M0*(1-p.M1A0)
   nie<-p.no.intervention-p.intervention
-  
+    
   
   return(list(no.intervention=p.no.intervention,
               intervention=p.intervention,
