@@ -66,7 +66,7 @@ glm(Y~A+M+Sex+Age, family = binomial(),data=d)# (til TAG: jeg får nogenlunde sam
 dat<-d[,.(A,M,Y)]
 
 mediation.effect<-function(data,A,M,Y) {
-  data<-copy(d)
+  #data<-copy(d)
   datA1<-copy(data[A==1])
   datA0<-copy(data[A==0])
   
