@@ -1,0 +1,301 @@
+
+% Created 2018-08-01 Wed 12:57
+% Intended LaTeX compiler: pdflatex
+\documentclass{article}
+               \usepackage{listings}
+               \usepackage{color}
+               \usepackage{tocloft}
+
+               \usepackage{times}
+%\usepackage[cmbold]{mathtime}
+\usepackage{bm}
+\usepackage{natbib}
+
+
+% --------- OWN START
+
+\usepackage{hyphenat}
+\usepackage{bbold}
+\usepackage{bbm}
+\usepackage[T1]{fontenc}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{prodint}
+\usepackage{color}
+
+               
+\usepackage{amsmath}
+\usepackage{array}
+\usepackage[T1]{fontenc}
+\usepackage{natbib}
+\bibliographystyle{abbrvnat}
+\setcitestyle{authoryear,open={(},close={)}}
+\usepackage{authblk} 
+\usepackage{mathrsfs}
+\usepackage{enumitem}
+\newcommand*{\qeda}{\hfill\ensuremath{\tiny\CIRCLE}} 
+\usepackage[small]{titlesec}
+% \titleformat{\subsection}%[runin]
+% {\large\bfseries}{\thesubsection}{1em}{}
+\titleformat{\subsubsection}[runin]
+{\normalfont\bfseries}{\thesubsubsection}{1em}{}
+%{\normalfont\itshape}{\normalfont\thesubsubsection}{1em}{}
+\usepackage{adjustbox}
+\usepackage{prodint}
+\usepackage{booktabs}
+\usepackage{bm}
+\usepackage{bbold}
+%\setlength\parindent{0pt}
+\usepackage{wasysym}
+\usepackage[margin=1.3in]{geometry}
+\setcounter{secnumdepth}{4}
+
+\newcommand{\cadlag}{c\`{a}dl\`{a}g }
+\newcommand{\Cadlag}{C\`{a}dl\`{a}g }
+\newcommand{\EE}{\mathbb{E}}
+\newcommand{\one}{1}
+\newcommand{\eps}{\varepsilon}
+\newcommand{\VV}{V}
+\newcommand{\PP}{\mbox{P}}
+\newcommand{\norm}{\mathcal{N}}
+\newcommand{\lag}{N}
+\newcommand{\str}{S}
+\newcommand{\smin}{s^{\min}}
+\newcommand{\smax}{s^{\max}}
+\newcommand{\styp}{s^{*}}
+\newcommand{\period}{[a,b]}
+\newcommand{\periodK}{\ensuremath{[T_k,T_{k+1})}}
+\newcommand{\K}{K}
+\newcommand{\kk}{k}
+\newcommand{\D}{D}
+\newcommand{\B}{B}
+\newcommand{\F}{\mathcal{F}}
+\newcommand{\E}{E}
+\newcommand{\XX}{X}
+\newcommand{\QQ}{Q}
+\newcommand{\Ru}{R}
+\newcommand{\GG}{G}
+\newcommand{\T}{T}
+\newcommand{\st}{s}
+\newcommand{\Nn}{N}
+\newcommand{\C}{C}
+\newcommand{\uu}{u}
+\newcommand{\vv}{v}
+\newcommand{\zz}{z}
+\newcommand{\ww}{w}
+\newcommand{\M}{M}
+\newcommand{\I}{I}
+\newcommand{\RR}{R}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\1}{\mathbb{1}}
+\newcommand{\ses}{SES}
+\newcommand{\Y}{Y}
+\newcommand{\htt}{h}
+\newcommand{\dtt}{d}
+\newcommand{\tM}{M}
+\newcommand{\ta}{\tau_0}
+\newcommand{\tb}{\tau_1}
+\newcommand{\intd}{\mathcal{D}}
+\newcommand{\nW}{n_W}
+\newcommand{\nL}{n_L}
+\newcommand{\tmax}{\tau}
+\newcommand{\A}{A}
+\newcommand{\LL}{L}
+\newcommand{\W}{W}
+\newcommand{\X}{X}
+\newcommand{\U}{U}
+\newcommand{\Z}{Z}
+\newcommand{\btheta}{\bm{\theta}}
+\newcommand{\Pvar}{W}
+\newcommand{\pvar}{p}
+\newcommand{\logit}{\text{logit}}
+\newcommand{\expit}{\text{expit}}
+\newcommand{\argmax}{\text{argmax}}
+\newcommand{\argmin}{\text{argmin}}
+\newcommand{\cupdot}{\mathbin{\mathaccent\cdot\cup}}
+\newcommand{\qed}{\hfill\(\square\)}
+\newcommand\independent{\protect\mathpalette{\protect\independenT}{\perp}}\def\independenT#1#2{\mathrel{\rlap{$#1#2$}\mkern2mu{#1#2}}}
+\newtheorem{thm}{Theorem}[section]
+\newtheorem{claim}{Claim}[section]
+\newtheorem{defi}{Definition}
+\newtheorem{lemma}[thm]{Lemma}
+\newtheorem{example}[thm]{Example}
+\newtheorem{obs}{Observation}
+\newtheorem{drug}{Drug type}
+\renewcommand\thedrug{\Roman{drug}}
+\newtheorem{remark}{Remark}
+\newtheorem{assumption}{Assumption}
+\newtheorem{inclusion}{Inclusion criterion}
+\newtheorem{proxy}{Proxy}
+\usepackage{tikz}
+\usetikzlibrary{arrows}
+\tikzset{every picture/.style=remember picture}
+\newcommand{\mathnode}[1]{\mathord{\tikz[baseline=(#1.base), inner sep = 0pt]{\node (#1) {$#1$};}}}
+
+\lstset{
+keywordstyle=\color{blue},
+commentstyle=\color{red},stringstyle=\color[rgb]{0,.5,0},
+literate={~}{$\sim$}{1},
+basicstyle=\ttfamily\small,
+columns=fullflexible,
+breaklines=true,
+breakatwhitespace=false,
+numbers=left,
+numberstyle=\ttfamily\tiny\color{gray},
+stepnumber=1,
+numbersep=10pt,
+backgroundcolor=\color{white},
+tabsize=4,
+keepspaces=true,
+showspaces=false,
+showstringspaces=false,
+xleftmargin=.23in,
+frame=single,
+basewidth={0.5em,0.4em},
+}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{graphicx}
+\usepackage{grffile}
+\usepackage{longtable}
+\usepackage{wrapfig}
+\usepackage{rotating}
+\usepackage[normalem]{ulem}
+\usepackage{amsmath}
+\usepackage{textcomp}
+\usepackage{amssymb}
+\usepackage{capt-of}
+\usepackage{hyperref}
+
+
+\title{Stochastic intervention: Brystsmerter and ambulance}
+\author{Helene C. W. Rytgaard}
+
+\begin{document}
+
+\maketitle
+
+
+% \section*{Supplementary material}
+
+\section{Notation}
+
+We consider data as follows: \(X\in \R^d\) are general covariates,
+\(W\in\lbrace 0,1\rbrace\) is an indicator of brystsmerter,
+\(A\in \lbrace 0,1\rbrace\) is an indicator of ambulance,
+\(Y\in\lbrace 0,1\rbrace\) is an outcome indicator (30 day survival).\\
+
+Let \(\pi( W, X )= P(A=1 \mid  W, X)\) denote the conditional
+distribution of ambulance. Let \(\hat{\pi}_n\) denote its estimator
+(super learner).  \\
+
+All data are used for initial estimation. \\
+
+Note that the population in the following sections consists only of
+those \(i\) for which \(W_i = 0\). Thus, \(n\) are the number of
+subjects with \(W_i=0\).
+
+
+\section{Target parameter}
+
+Our target parameter is:
+\begin{align*}
+  \Psi(P)  = \Psi_1 (P) - \Psi_2 (P) ,
+  %\qquad \text{for, } \, P \in \mathcal{M},
+\end{align*}
+where
+\begin{align}
+  \Psi_1 (P)  = \EE\bigg[ \sum_{a=0,1}\EE [Y \mid A=a, W=0, X]
+  \hat{\pi}_n ( W=1, X) \bigg],
+  \label{eq:psi:1}
+\end{align}
+with the outer expectation taken over the observed distribution of
+\(X\), and,
+\begin{align}
+  \Psi_2 (P) = \EE\big[ \EE [Y \mid A, W=0, X]
+  \big],
+    \label{eq:psi:2}
+\end{align}
+with the outer expectation taken over both \(A\) and \(X\). Note that
+\(\Psi_1\) defined by \eqref{eq:psi:1} is the risk among those with no
+brystsmerter (\(W=0\)) had they had an ambulance sent for them with
+the same probability that an ambulance was sent to someone in the same
+population with same characteristics \(X\) but \textit{with}
+brystsmerter.  \(\Psi_2\) defined by \eqref{eq:psi:2} is the observed
+risk among those who did not report brystsmerter (\(W=0\)).
+
+\subsection{Efficient influence function}
+
+ The efficient influence function for \(\Psi_1\) is given
+by
+\begin{align*}
+ & \phi_1 ( P ) (O) =  \frac{ \hat{\pi}_n ( W=1, X)^A \big( 1-
+  \hat{\pi}_n ( W=1, X)\big)^{1-A}}{\pi ( W=0, X)^A \big( 1-
+  \pi ( W=0, X)\big)^{1-A}} \big( Y - \EE[Y \mid A,W=0,X] \big)  \\
+&\qquad\qquad\qquad\qquad\qquad  + \, 
+  \sum_{a=0,1}\EE [Y \mid A=a, W=0, X]
+  \hat{\pi}_n ( W=1, X) - \Psi_1(P)(O), 
+\end{align*}
+and the efficient influence function for \(\Psi_2\) is given by
+\begin{align*}
+  \phi_2 ( P )(O) = \big( Y - \EE[Y \mid A,W=0,X] \big)  +
+  \EE [Y \mid  W=0, X]
+  - \Psi_2(P)(O). 
+\end{align*}
+Thus, the efficient influence function for \(\Psi = \Psi_1 - \Psi_2\)
+is
+\begin{align*}
+\phi (P) (O) = \phi_1(P)(O) - \phi_2(P)(O). 
+\end{align*}
+
+\section{Asymptotic distribution of estimator}
+
+Under regularity conditions, bla bla, we can compute standard errors
+for a TMLE estimator \(\hat{\psi}^*_n\) for \(\Psi(P_0)\) simply by:
+\begin{align*}
+  \sqrt{\frac{\hat{\sigma}_n}{n}},\qquad  \text{ where }  \quad \hat{\sigma}^2_n = \frac{1}{n} \sum_{i=1}^n
+\big(  \phi (\hat{P}_n^*) (O_i)\big)^2 , 
+\end{align*}
+the latter being an estimate of the variance of the efficient
+influence function. With estimators \(\hat{\pi}_n(w, X)\) for
+\(P(A=1 \mid W=w, X)\) and \(\hat{Q}_n( a, L, w)\) for
+\(Q ( a, L, w) = \EE [Y \mid A=a, W=w, L]\) the summand of the formula
+above reads:
+\begin{align*}
+  & \phi (\hat{P}_n^*) (O_i)
+    =   \frac{ \hat{\pi}_n ( W=1, X_i)^{A_i} \big( 1-
+    \hat{\pi}_n ( W=1, X_i)\big)^{1-A_i}}{\hat{\pi}_n ( W=0, X_i)^{A_i} \big( 1-
+    \hat{\pi}_n  ( W=0, X_i)\big)^{1-A_i}} \big( Y - \hat{Q}_n ( A, W=0, X_i)  \big)  \\
+  &\qquad\qquad\qquad\qquad\qquad\quad\qquad  + \, 
+    \sum_{a=0,1} \hat{Q}_n ( A=a, W=0, X_i)
+    \hat{\pi}_n ( W=1, X_i) - \hat{\psi}_1  \\
+  &\quad + \,   \big( Y_i -   \hat{Q}_n ( A_i, W=0, X_i) \big)  +
+    \sum_{a=0,1} \hat{Q}_n ( A=a, W=0, X_i)
+    \hat{\pi}_n ( W=0, X_i)
+    -\hat{\psi}_2. 
+\end{align*}
+
+
+\newpage
+
+\bibliographystyle{biometrika}
+\bibliography{refs}
+
+
+
+
+\end{document}
+
+
+
+
+
+
+
+
+
+
+
+
