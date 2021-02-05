@@ -54,29 +54,13 @@ regression(m1) <- Y1~ -7.33+0.075*Sex+0.067*Age+0.092*M1
 plot(m1)
 print(m1) 
 
-set.seed(1); d<- sim(m1,5000) # evt 100.000 eller 10x10.000
-#combine outcomes/mediator for A=1 and A=0 to one
-setDT(d)
-d[A=='1',M:=M1]
-d[A=='0',M:=M0]
-d[A=='1',Y:=Y1]
-d[A=='0',Y:=Y0]
-
-d[,.(id=1:.N,
-     A=factor(A),
-     M=factor(M),
-     Age=Age,
-     Sex=factor(Sex),
-     Y=Y)]
-
-# tjek at regressioner giver samme resultat ca. 
-glm(Y~A+M+Sex+Age, family = binomial(),data=d)# (til TAG: jeg får nogenlunde samme værdier nu)
-
 ##############################################
 ########### simulate data from m1 ############
 
-ambulance<-function(data, A, n.train, n, model, formula.m, formula.y, sl.lib, true.parameters){
+ambulance<-function(data, A, n.train, n, model, formula.m, formula.y, sl.lib.mediator,sl.lib.outcome, true.parameters){
   #data<-d
+  #n.train=50000
+  #n=10000
   #split data into training and validation set
   setDT(data)
   train<-data[1:n.train]
@@ -95,7 +79,7 @@ ambulance<-function(data, A, n.train, n, model, formula.m, formula.y, sl.lib, tr
     dOther.val[,M:=factor(p.am)]
     p.Y.A1M0 <- with(dOther.val,expit(-7.33+0.075*as.numeric(Sex=='1')+0.067*Age+0.092*as.numeric(M=='1')))# true parameters (datagenererende) Y for A1
     # Y(A1,M1)
-    p.Y.A1M1<-dOther.val[,mean(Y)]
+    p.Y.A1M1<-mean(dOther.val[,as.numeric(Y=='1')])
     
     results<-c(true.Y.A1M0=mean(p.Y.A1M0),true.Y.A1M1=p.Y.A1M1,True.ATE=mean(p.Y.A1M0)-p.Y.A1M1)
     return(results)
@@ -140,7 +124,7 @@ ambulance<-function(data, A, n.train, n, model, formula.m, formula.y, sl.lib, tr
         amBryst<-SuperLearner(Y=dBryst[,as.numeric(M==1)],
                               X=dBryst[,.(Sex,Age)],
                               family = binomial(),
-                              SL.library = sl.lib)
+                              SL.library = sl.lib.mediator)
         
         # predict chance of receiving an ambulance among other symptoms
         p.am<-predict(amBryst, newdata = dOther.val[,.(Sex,Age)], onlySL = T)
@@ -150,7 +134,7 @@ ambulance<-function(data, A, n.train, n, model, formula.m, formula.y, sl.lib, tr
         mortOther<-SuperLearner(Y=dOther[,as.numeric(Y==1)],
                                 X=dOther[,.(Sex,Age,as.numeric(M==1))],
                                 family = binomial(),
-                                SL.library = sl.lib)
+                                SL.library = sl.lib.outcome)
         
         # Estimated Y(A1,M1)
         p.Y.A1M1<-predict(mortOther, newdata = dOther.val[,.(Sex,Age,as.numeric(M==1))],onlySL = T)$pred
@@ -185,16 +169,12 @@ ambulance<-function(data, A, n.train, n, model, formula.m, formula.y, sl.lib, tr
   
 }
   
-
-
 # simulate data for simulation
-
 set.seed(1); d<- sim(m1,5000) 
 setDT(d)
-d[A=='1',M:=M1]
-d[A=='0',M:=M0]
-d[A=='1',Y:=Y1]
-d[A=='0',Y:=Y0]
+d[,M:=fifelse(A=='1',M1,M0)]
+d[,Y:=factor(fifelse(A=='1',Y1,Y0))]
+
 
 d<-d[,.(id=1:.N,
      A=factor(A),
@@ -202,14 +182,54 @@ d<-d[,.(id=1:.N,
      Age=Age,
      Sex=factor(Sex),
      Y=Y)]
-
 str(d)
 
+glm(Y~A+M+Age+Sex,data=d, family = binomial)
 # define library for superlearner
-sl.lib<-c('SL.glmnet','SL.randomForest','SL.gam','SL.mean')
+# mediator model
+
+SL.glm.inter.M <- function (Y, X, newX, family, obsWeights, model = TRUE, ...) {
+  if (is.matrix(X)) {
+    X = as.data.frame(X)
+  }
+  fit.glm <- glm(Y ~ Sex+Age+Sex*Age, data = X, family = family, weights = obsWeights, 
+                 model = model)
+  if (is.matrix(newX)) {
+    newX = as.data.frame(newX)
+  }
+  pred <- predict(fit.glm, newdata = newX, type = "response")
+  fit <- list(object = fit.glm)
+  class(fit) <- "SL.glm"
+  out <- list(pred = pred, fit = fit)
+  return(out)
+}
+
+
+#outcome model
+SL.glm.age.Y<- function (Y, X, newX, family, obsWeights, model = TRUE, ...) {
+  if (is.matrix(X)) {
+    X = as.data.frame(X)
+  }
+  fit.glm <- glm(Y ~ Age, data = X, family = family, weights = obsWeights, 
+                 model = model)
+  if (is.matrix(newX)) {
+    newX = as.data.frame(newX)
+  }
+  pred <- predict(fit.glm, newdata = newX, type = "response")
+  fit <- list(object = fit.glm)
+  class(fit) <- "SL.glm"
+  out <- list(pred = pred, fit = fit)
+  return(out)
+}
+
+
+#'SL.glmnet','SL.randomForest','SL.gam',
+sl.lib.mediator<-c('SL.mean','SL.glm','SL.glm.interaction','SL.glm.inter.M','SL.glm.age')
+sl.lib.outcome<-c('SL.mean','SL.glm','SL.glm.interaction','SL.glm.age.Y')
 
 # specify formula for mediator glm
 formula.m<-(M~Sex+Age)
+
 # specify formula for outcome glm
 formula.y<-(Y~Sex+Age+M)
 
@@ -218,11 +238,34 @@ formula.y<-(Y~Sex+Age+M)
 # true.parameter can be T/F
 y<-ambulance(data=d,
           A=A,
-          n=5000,
-          n.train=3000,
+          n=nrow(d),
+          n.train=nrow(d)*0.7,
           model='superlearner',
           formula.m=formula.m,
           formula.y=formula.y,
-          sl.lib=sl.lib,
+          sl.lib.mediator = sl.lib.mediator,
+          sl.lib.outcome = sl.lib.outcome,
           true.parameters=F);y
 
+
+
+# true parameter
+# simulate data for simulation
+set.seed(1); d<- sim(m1,100000) 
+setDT(d)
+d[,M:=fifelse(A=='1',M1,M0)]
+d[,Y:=factor(fifelse(A=='1',Y1,Y0))]
+
+
+d<-d[,.(id=1:.N,
+        A=factor(A),
+        M=factor(M),
+        Age=Age,
+        Sex=factor(Sex),
+        Y=Y)]
+str(d)
+y<-ambulance(data=d,
+             A=A,
+             n=nrow(d),
+             n.train=nrow(d)*0.7,
+             true.parameters=T);y
