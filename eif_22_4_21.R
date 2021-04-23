@@ -148,9 +148,8 @@ for (i in 1:500) {
   # Estimated Y for all
   expanded.data[,Qhat:=predict(Q.fit, newdata = expanded.data[,.(Sex,Age,Z,A)],onlySL = T)$pred]
   
-  # Estimated Y when no one had chest pain
-  #expanded.data[,Qhat.a1:=predict(Q.fit, newdata = expanded.data[,.(Sex,Age,Z,A=1)],onlySL = T)$pred]
-  # Estimated Y when all had chest pain
+  
+# Estimated Y when all had chest pain
   expanded.data[,Qhat.a0:=predict(Q.fit, newdata = expanded.data[,.(Sex,Age,Z,A=0)],onlySL = T)$pred]
   
   
