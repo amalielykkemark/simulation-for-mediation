@@ -1,12 +1,6 @@
 
 #-----#
 # libraries ----- 
-#pac<-c('SuperLearner','caret','glmnet','randomForest','lava','data.table','riskRegression',
-#     'Publish','nnet','LogicReg')
-#install.packages(c('riskRegression','parallel','foreach','Hmisc',
-#      'Publish','nnet','LogicReg','doParallel','acepack'))
-#install.packages(pac)
-
 library(SuperLearner)
 library(data.table)
 library(lava)
@@ -15,11 +9,6 @@ library(ggplot2)
 library(riskRegression)
 library(prodlim)
 library(Publish)
-library(foreach)
-library(parallel)
-library(patchwork)
-library(doParallel)
-
 options(scipen=999)
 
 ################################### M1 simple data set #######################################
