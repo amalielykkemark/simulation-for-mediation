@@ -44,15 +44,14 @@ eif.function.mediation<-function(data=data){
                               copy(dt)[, Z:=0]),
                         Z.obs=c(dt[, Z], dt[, Z]))
   
-  dt.full[, summary(pihat)]
-  dt.full[, summary(gammahat.a1)]
-  dt.full[, summary(gammahat.a0)]
+  #dt.full[, summary(pihat)]
+  #dt.full[, summary(gammahat.a1)]
+  #dt.full[, summary(gammahat.a0)]
   
-  max.gammahata0.list <-dt.full[, summary(gammahat.a0)[6]]
-  max.gammahata1.list <-dt.full[, summary(gammahat.a1)[6]]
+  #max.gammahata0.list <-dt.full[, summary(gammahat.a0)[6]]
+  #max.gammahata1.list <-dt.full[, summary(gammahat.a1)[6]]
   
-  max.pihat.list <- dt.full[, summary(pihat)[6]]
-  
+  #max.pihat.list <- dt.full[, summary(pihat)[6]]
   
   dt.full[, Qhat:=predict(Qfit, newdata=dt.full, type="response")]
   
@@ -88,11 +87,12 @@ eif.function.mediation<-function(data=data){
   out<-c(psi1=psi1.list,
             psi2=psi2.list,
             psi=psi.diff.list,
-            #eic1=eic1,
-            #eic2=eic2,
             se1=se1.list,
             se2=se2.list,
-            se.diff=se.diff.list)
+            se.diff=se.diff.list,
+         max.gammahat.a1=dt.full[, summary(gammahat.a1)[6]],
+         max.gammahat.a0=dt.full[, summary(gammahat.a0)[6]],
+         max.pihat=dt.full[, summary(pihat)[6]])
   
   return(out)
   
